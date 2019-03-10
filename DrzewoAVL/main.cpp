@@ -1,12 +1,12 @@
 #include <iostream>
 
-#include "TDrzewo.h"
+#include "TDrzewo.hpp"
 
 using namespace std;
 
 int main()
 {
-    TDrzewoAVL x1;
+    TDrzewoAVL<int> x1;
 
     x1.insert(1);
     x1.insert(2);

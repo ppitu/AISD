@@ -61,8 +61,8 @@ void TDrzewoAVL<T>::makeEmpty(Node* t)
     delete t;
 }
 
-typename
-TDrzewoAVL<T>::Node* TDrzewoAVL<T>::insert(T x, Node* t)
+template <typename T>
+typename TDrzewoAVL<T>::Node* TDrzewoAVL<T>::insert(T x, Node* t)
 {
     if(t == nullptr)
     {
@@ -98,7 +98,8 @@ TDrzewoAVL<T>::Node* TDrzewoAVL<T>::insert(T x, Node* t)
     return t;
 }
 
-TDrzewoAVL<T>::Node* TDrzewoAVL::singleRightRotate(Node* &t)
+template <typename T>
+typename TDrzewoAVL<T>::Node* TDrzewoAVL<T>::singleRightRotate(Node* &t)
 {
     Node* u = t->left;
     t->left = u->right;
@@ -108,7 +109,8 @@ TDrzewoAVL<T>::Node* TDrzewoAVL::singleRightRotate(Node* &t)
     return u;
 }
 
-TDrzewoAVL<T>::Node* TDrzewoAVL::singleLeftRotate(Node* &t)
+template <typename T>
+typename TDrzewoAVL<T>::Node* TDrzewoAVL<T>::singleLeftRotate(Node* &t)
 {
     Node* u = t->right;
     t->right = u->left;
@@ -118,19 +120,22 @@ TDrzewoAVL<T>::Node* TDrzewoAVL::singleLeftRotate(Node* &t)
     return u;
 }
 
-TDrzewoAVL<T>::Node* TDrzewoAVL::doubleRightRotate(Node* &t)
+template <typename T>
+typename TDrzewoAVL<T>::Node* TDrzewoAVL<T>::doubleRightRotate(Node* &t)
 {
     t->left = singleLeftRotate(t->left);
     return singleRightRotate(t);
 }
 
-TDrzewoAVL<T>::Node* TDrzewoAVL::doubleLeftRotate(Node* &t)
+template <typename T>
+typename TDrzewoAVL<T>::Node* TDrzewoAVL<T>::doubleLeftRotate(Node* &t)
 {
     t->right = singleRightRotate(t->right);
     return singleLeftRotate(t);
 }
 
-TDrzewoAVL<T>::Node* TDrzewoAVL::findMin(Node* t)
+template <typename T>
+typename TDrzewoAVL<T>::Node* TDrzewoAVL<T>::findMin(Node* t)
 {
     if(t == nullptr)
         return nullptr;
@@ -140,7 +145,8 @@ TDrzewoAVL<T>::Node* TDrzewoAVL::findMin(Node* t)
         return findMin(t->left);
 }
 
-TDrzewoAVL<T>::Node* TDrzewoAVL::findMax(Node* t)
+template <typename T>
+typename TDrzewoAVL<T>::Node* TDrzewoAVL<T>::findMax(Node* t)
 {
     if( t == nullptr)
         return nullptr;
@@ -150,7 +156,8 @@ TDrzewoAVL<T>::Node* TDrzewoAVL::findMax(Node* t)
         return findMax(t->right);
 }
 
-TDrzewoAVL<T>::Node* TDrzewoAVL::remove(int x, Node* t)
+template <typename T>
+typename TDrzewoAVL<T>::Node* TDrzewoAVL<T>::remove(T x, Node* t)
 {
     Node* tmp;
 
@@ -203,11 +210,13 @@ TDrzewoAVL<T>::Node* TDrzewoAVL::remove(int x, Node* t)
 
 }
 
+template <typename T>
 int TDrzewoAVL<T>::height(Node* t)
 {
     return (t == nullptr ? -1 : t->height);
 }
 
+template <typename T>
 int TDrzewoAVL<T>::getBalance(Node* t)
 {
     if(t == nullptr)
@@ -216,6 +225,7 @@ int TDrzewoAVL<T>::getBalance(Node* t)
         return height(t->left) - height(t->right);
 }
 
+template <typename T>
 void TDrzewoAVL<T>::inorder(Node* t)
 {
     if(t == nullptr)
@@ -225,16 +235,19 @@ void TDrzewoAVL<T>::inorder(Node* t)
     inorder(t->right);
 }
 
-void TDrzewoAVL<T>::insert(int x)
+template <typename T>
+void TDrzewoAVL<T>::insert(T x)
 {
     root = insert(x, root);
 }
 
-void TDrzewoAVL<T>::remove(int x)
+template <typename T>
+void TDrzewoAVL<T>::remove(T x)
 {
     root = remove(x, root);
 }
 
+template <typename T>
 void TDrzewoAVL<T>::display()
 {
     inorder(root);
