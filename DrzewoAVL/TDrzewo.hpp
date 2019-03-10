@@ -1,15 +1,57 @@
-#include <iostream>
+#ifndef TDrzewo_HPP
+#define TDrzewo_HPP
 
-#include "TDrzewo.h"
+#include <iostream>
 
 using namespace std;
 
-TDrzewoAVL::TDrzewoAVL()
+template <typename T>
+class TDrzewoAVL 
+{
+    public:
+
+    TDrzewoAVL();
+    void insert(T );
+    void remove(T );
+    void display();
+
+    private:
+
+    struct Node
+    {
+    T data;
+    Node* left;
+    Node* right;
+    int height;
+    };
+
+    Node* root;
+
+    void makeEmpty(Node* );
+    Node* insert(T, Node*);
+    Node* singleRightRotate(Node* &);
+    Node* singleLeftRotate(Node* &);
+    Node* doubleLeftRotate(Node* &);
+    Node* doubleRightRotate(Node* &);
+    Node* findMin(Node* );
+    Node* findMax(Node* );
+    Node* remove(T, Node*);
+    int height(Node* );
+    int getBalance(Node* );
+    void inorder(Node* );
+
+};
+
+/************************************************************************************************/
+
+template <typename T>
+TDrzewoAVL<T>::TDrzewoAVL()
 {
     root = nullptr;
 }
 
-void TDrzewoAVL::makeEmpty(Node* t)
+template <typename T>
+void TDrzewoAVL<T>::makeEmpty(Node* t)
 {
     if(t == nullptr)
         return;
@@ -19,7 +61,8 @@ void TDrzewoAVL::makeEmpty(Node* t)
     delete t;
 }
 
-TDrzewoAVL::Node* TDrzewoAVL::insert(int x, Node* t)
+typename
+TDrzewoAVL<T>::Node* TDrzewoAVL<T>::insert(T x, Node* t)
 {
     if(t == nullptr)
     {
@@ -55,7 +98,7 @@ TDrzewoAVL::Node* TDrzewoAVL::insert(int x, Node* t)
     return t;
 }
 
-TDrzewoAVL::Node* TDrzewoAVL::singleRightRotate(Node* &t)
+TDrzewoAVL<T>::Node* TDrzewoAVL::singleRightRotate(Node* &t)
 {
     Node* u = t->left;
     t->left = u->right;
@@ -65,7 +108,7 @@ TDrzewoAVL::Node* TDrzewoAVL::singleRightRotate(Node* &t)
     return u;
 }
 
-TDrzewoAVL::Node* TDrzewoAVL::singleLeftRotate(Node* &t)
+TDrzewoAVL<T>::Node* TDrzewoAVL::singleLeftRotate(Node* &t)
 {
     Node* u = t->right;
     t->right = u->left;
@@ -75,19 +118,19 @@ TDrzewoAVL::Node* TDrzewoAVL::singleLeftRotate(Node* &t)
     return u;
 }
 
-TDrzewoAVL::Node* TDrzewoAVL::doubleRightRotate(Node* &t)
+TDrzewoAVL<T>::Node* TDrzewoAVL::doubleRightRotate(Node* &t)
 {
     t->left = singleLeftRotate(t->left);
     return singleRightRotate(t);
 }
 
-TDrzewoAVL::Node* TDrzewoAVL::doubleLeftRotate(Node* &t)
+TDrzewoAVL<T>::Node* TDrzewoAVL::doubleLeftRotate(Node* &t)
 {
     t->right = singleRightRotate(t->right);
     return singleLeftRotate(t);
 }
 
-TDrzewoAVL::Node* TDrzewoAVL::findMin(Node* t)
+TDrzewoAVL<T>::Node* TDrzewoAVL::findMin(Node* t)
 {
     if(t == nullptr)
         return nullptr;
@@ -97,7 +140,7 @@ TDrzewoAVL::Node* TDrzewoAVL::findMin(Node* t)
         return findMin(t->left);
 }
 
-TDrzewoAVL::Node* TDrzewoAVL::findMax(Node* t)
+TDrzewoAVL<T>::Node* TDrzewoAVL::findMax(Node* t)
 {
     if( t == nullptr)
         return nullptr;
@@ -107,7 +150,7 @@ TDrzewoAVL::Node* TDrzewoAVL::findMax(Node* t)
         return findMax(t->right);
 }
 
-TDrzewoAVL::Node* TDrzewoAVL::remove(int x, Node* t)
+TDrzewoAVL<T>::Node* TDrzewoAVL::remove(int x, Node* t)
 {
     Node* tmp;
 
@@ -160,12 +203,12 @@ TDrzewoAVL::Node* TDrzewoAVL::remove(int x, Node* t)
 
 }
 
-int TDrzewoAVL::height(Node* t)
+int TDrzewoAVL<T>::height(Node* t)
 {
     return (t == nullptr ? -1 : t->height);
 }
 
-int TDrzewoAVL::getBalance(Node* t)
+int TDrzewoAVL<T>::getBalance(Node* t)
 {
     if(t == nullptr)
         return 0;
@@ -173,7 +216,7 @@ int TDrzewoAVL::getBalance(Node* t)
         return height(t->left) - height(t->right);
 }
 
-void TDrzewoAVL::inorder(Node* t)
+void TDrzewoAVL<T>::inorder(Node* t)
 {
     if(t == nullptr)
         return;
@@ -182,18 +225,22 @@ void TDrzewoAVL::inorder(Node* t)
     inorder(t->right);
 }
 
-void TDrzewoAVL::insert(int x)
+void TDrzewoAVL<T>::insert(int x)
 {
     root = insert(x, root);
 }
 
-void TDrzewoAVL::remove(int x)
+void TDrzewoAVL<T>::remove(int x)
 {
     root = remove(x, root);
 }
 
-void TDrzewoAVL::display()
+void TDrzewoAVL<T>::display()
 {
     inorder(root);
     cout << endl;
 }
+
+//////////////////////////////////////////////
+
+#endif //TDrzewo_HPP
