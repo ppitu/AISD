@@ -11,9 +11,13 @@ class TDrzewoAVL
     public:
 
     TDrzewoAVL();
+    TDrzewoAVL( const TDrzewoAVL &);
+    TDrzewoAVL& operator=(const TDrzewoAVL &);
     void insert(T );
     void remove(T );
     void display();
+    void treeSize();
+    void findElement(T );
 
     private:
 
@@ -22,10 +26,14 @@ class TDrzewoAVL
     T data;
     Node* left;
     Node* right;
+    Node* up;
     int height;
     };
 
     Node* root;
+    Node* element; //wskaznik do elementy gdy ten znajduje sie w drzewie
+
+    int treesize = 0;
 
     void makeEmpty(Node* );
     Node* insert(T, Node*);
@@ -36,6 +44,8 @@ class TDrzewoAVL
     Node* findMin(Node* );
     Node* findMax(Node* );
     Node* remove(T, Node*);
+    Node* copyNode(Node* );
+    Node* find(T, Node*);
     int height(Node* );
     int getBalance(Node* );
     void inorder(Node* );
@@ -49,6 +59,21 @@ TDrzewoAVL<T>::TDrzewoAVL()
 {
     root = nullptr;
 }
+
+template <typename T>
+TDrzewoAVL<T>::TDrzewoAVL( const TDrzewoAVL & kopiuj)
+{
+    root = copyNode(kopiuj.root);
+}
+
+/*template <typename T>
+TDrzewoAVL& TDrzewoAVL<T>::operator= (const TDrzewoAVL & kopiuj)
+{
+    if(&kopiuj != this )
+    {
+        root = copyNode(kopiuj.root);
+    }
+}*/
 
 template <typename T>
 void TDrzewoAVL<T>::makeEmpty(Node* t)
@@ -91,7 +116,8 @@ typename TDrzewoAVL<T>::Node* TDrzewoAVL<T>::insert(T x, Node* t)
                 t = doubleLeftRotate(t);
         }
     } else {
-        cout << "blad" << endl;
+        treesize--;
+        //cout << "blad" << endl;
     }
 
     t->height = max(height(t->left), height(t->right))+1;
@@ -163,7 +189,10 @@ typename TDrzewoAVL<T>::Node* TDrzewoAVL<T>::remove(T x, Node* t)
 
     //Element nie znaleziony
     if( t == nullptr)
+    {
+        treesize++;
         return t;
+    }
     //Szukanie elementu
     else if(x < t->data)
         t->left = remove(x, t->left);
@@ -185,29 +214,56 @@ typename TDrzewoAVL<T>::Node* TDrzewoAVL<T>::remove(T x, Node* t)
 
         delete tmp;
     }
-
     if(t == nullptr)
         return t;
 
     t->height = max(height(t->left), height(t->right)) + 1;
 
     //Jesli drzewo nie zbalansowane
-        if(height(t->left) - height(t->right) == -2)
-        {
-            if(height(t->right->right) - height(t->right->left) == 1)
-                return singleLeftRotate(t);
-            else
-                return doubleLeftRotate(t);
-        }
-        else if(height(t->right) - height(t->left) == 2)
-        {
-            if(height(t->left->left) - height(t->left->right) == 1)
-                return singleRightRotate(t);
-            else
-                return doubleRightRotate(t);
-        }
-        return t;
+    if(height(t->left) - height(t->right) == -2)
+    {
+        if(height(t->right->right) - height(t->right->left) == 1)
+            return singleLeftRotate(t);
+        else
+               return doubleLeftRotate(t);
+    }
+    else if(height(t->right) - height(t->left) == 2)
+    {
+        if(height(t->left->left) - height(t->left->right) == 1)
+            return singleRightRotate(t);
+        else
+            return doubleRightRotate(t);
+    }
+    return t;
 
+}
+
+template <typename T>
+typename TDrzewoAVL<T>::Node* TDrzewoAVL<T>::copyNode(Node* t)
+{
+    if(t == nullptr)
+        return nullptr;
+
+    Node* copynode = new Node;
+    copynode->data = t->data;
+    copynode->height = t->height;
+    copynode->left = copyNode(t->left);
+    copynode->right = copyNode(t->right);
+    return copynode;
+} 
+
+template <typename T>
+typename TDrzewoAVL<T>::Node* TDrzewoAVL<T>::find(T x, Node* t)
+{
+    if(t == nullptr)
+        return nullptr;
+    
+    if(t->data == x)
+        return t;
+    else if( x < t->data)
+        return find(x, t->left);
+    else 
+        return find(x, t->right);
 }
 
 template <typename T>
@@ -238,12 +294,14 @@ void TDrzewoAVL<T>::inorder(Node* t)
 template <typename T>
 void TDrzewoAVL<T>::insert(T x)
 {
+    treesize++;
     root = insert(x, root);
 }
 
 template <typename T>
 void TDrzewoAVL<T>::remove(T x)
 {
+    treesize--;
     root = remove(x, root);
 }
 
@@ -254,6 +312,21 @@ void TDrzewoAVL<T>::display()
     cout << endl;
 }
 
+template <typename T>
+void TDrzewoAVL<T>::treeSize()
+{
+    cout << treesize << endl;
+}
+
+template <typename T>
+void TDrzewoAVL<T>::findElement(T x)
+{
+    element = find(x, root);
+    if( element != nullptr)
+        cout << "Znaleziono element" << endl;
+    else    
+        cout << "Brak elementu" << endl;
+}
 //////////////////////////////////////////////
 
 #endif //TDrzewo_HPP
