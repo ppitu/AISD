@@ -1,52 +1,60 @@
-#include "TDrzewo.hpp"
-
 #ifndef TSet_hpp_
 #define TSet_hpp_
 
+#include <iostream>
 
+#include "TDrzewoAVL.hpp"
+
+using namespace std;
 
 template <typename T>
 class TSet
 {
-
     public:
+        TDrzewoAVL<T> x1;
 
-    void insert(T );
-    void display();
-    void remove(T );
-
-    private:
+        void insert(T );
+        void display();
+        void findElement(T );
+        void remove(T );
+        int sizeElement();
 
 };
 
 template <typename T>
 void TSet<T>::insert(T x)
 {
-    TDrzewoAVL<T> s1;
-    
-    if(find(x, s1.root) == nullptr)
-        s1.insert(x);
-    else
-        cout << "jest" << endl;
+    if(x1.findElement(x) == nullptr)
+        x1.insert(x);
+    else 
+        return;
 }
 
 template <typename T>
 void TSet<T>::display()
 {
-    TDrzewoAVL<T> s1;
+    x1.display();
+}
 
-    s1.display();
+template <typename T>
+void TSet<T>::findElement(T x)
+{
+    auto pom = x1.findElement(x);
 }
 
 template <typename T>
 void TSet<T>::remove(T x)
 {
-    TDrzewoAVL<T> s1;
-    
-    if(s1.find(x) == nullptr)
+    if(x1.findElement(x) == nullptr)
         return;
-
-    s1.remove(x);
+    else 
+        x1.remove(x);
 }
 
-#endif //TSet_hpp_
+template <typename T>
+int TSet<T>::sizeElement()
+{
+    return x1.treeSize();
+}
+
+#endif //Tset_hpp_

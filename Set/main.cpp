@@ -1,17 +1,55 @@
-#include <iostream>
 
-#include "TDrzewo.hpp"
+
+#include <iostream>
+#include <string>
 #include "TSet.hpp"
 
 using namespace std;
 
+template <typename Iter>
+void printDebugInfo(const std::pair<Iter, bool> &insert_info) { std::cout << (insert_info.second ? "Dodano " + std::to_string(*insert_info.first) : "Nie dodano ;/") << std::endl; }
+
+template <typename Iter>
+void printDebugInfo(const Iter &find_info) { std::cout << (find_info ? "Znaleziono " + std::to_string(*find_info) : "Nie znaleziono ;/") << std::endl; }
+
+template <typename T>
+void printSetSizeAndElems(TSet<T> &s)
+{
+std::cout << "Size: " << s.sizeElement() << std::endl;
+for(auto &e : s) std::cout << e << ", ";
+std::cout << std::endl;
+}
+
 int main()
 {
-    TSet<int> x1;
+TSet<int> s;
+/*printDebugInfo(s.insert(8));
+printDebugInfo(s.insert(4));
+printDebugInfo(s.insert(10));
+printDebugInfo(s.insert(10));
+printDebugInfo(s.insert(2));
+printDebugInfo(s.insert(5));
+printDebugInfo(s.insert(9));
+printDebugInfo(s.insert(12));
+printDebugInfo(s.insert(12));
+printDebugInfo(s.insert(1));
+printDebugInfo(s.insert(14));
+printDebugInfo(s.insert(7));
+auto s2 = s;
+printDebugInfo(s.findElement(5));
+s.remove(4);
+printDebugInfo(s.findElement(5));
+s.remove(12);
+s.remove(14);
+TSet<int> s3;
+s3 = s;
+s.remove(8);
+printSetSizeAndElems(s);
+printSetSizeAndElems(s2);
+printSetSizeAndElems(s3);
 
-    x1.insert(4);
-    x1.insert(4);
-    x1.insert(3);
-
-    x1.display();
+return 0;*/
+s.insert(1);
+printSetSizeAndElems(s);
 }
+
