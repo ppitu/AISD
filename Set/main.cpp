@@ -18,11 +18,19 @@ for(auto &e : s) std::cout << e << ", ";
 std::cout << std::endl;
 }
 
+template <typename T>
+void printSetSizeAndElems(const TSet<T> &s)
+{
+std::cout << "Size: " << s.sizeElement() << std::endl;
+for(const auto &e : s) std::cout << e << ", ";
+std::cout << std::endl;
+}
+
 int main()
 {
 TSet<int> s;
 printDebugInfo(s.insert(8));
-/*printDebugInfo(s.insert(4));
+printDebugInfo(s.insert(4));
 printDebugInfo(s.insert(10));
 printDebugInfo(s.insert(10));
 printDebugInfo(s.insert(2));
@@ -33,25 +41,30 @@ printDebugInfo(s.insert(12));
 printDebugInfo(s.insert(1));
 printDebugInfo(s.insert(14));
 printDebugInfo(s.insert(7));
+{
 auto s2 = s;
+printSetSizeAndElems(s2);
+}
+auto it = s.findElement(10);
+//*it = 2;
 printDebugInfo(s.findElement(5));
 s.remove(4);
 printDebugInfo(s.findElement(5));
 s.remove(12);
 s.remove(14);
+printDebugInfo(s.insert(0));
+printDebugInfo(s.insert(16));
+{
 TSet<int> s3;
 s3 = s;
+printSetSizeAndElems(s3);
+}
 s.remove(8);
 printSetSizeAndElems(s);
-printSetSizeAndElems(s2);
-printSetSizeAndElems(s3);
+const auto s4 = s;
+printSetSizeAndElems(s4);
 
-return 0;*/
-s.insert(2);
-s.insert(3);
-//auto it = insert(1);
-//printDebugInfo(s.findElement(5));
-printSetSizeAndElems(s);
-
+return 0;
 }
+
 

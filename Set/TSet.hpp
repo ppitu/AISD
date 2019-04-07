@@ -15,11 +15,17 @@ class TSet
 
         std::pair<bool, typename TDrzewoAVL<T>::Iterator> insert(T );
         void display();
-        void findElement(T );
+        typename TDrzewoAVL<T>::Iterator findElement(T );
         void remove(T );
         int sizeElement();
+        int sizeElement() const;
 
         typename TDrzewoAVL<T>::Iterator begin()
+        {
+            return x1.begin();
+        }
+
+        typename TDrzewoAVL<T>::Iterator begin() const
         {
             return x1.begin();
         }
@@ -29,23 +35,24 @@ class TSet
             return x1.end();
         }
 
+        typename TDrzewoAVL<T>::Iterator end() const
+        {
+            return x1.end();
+        }
+
+        typename TDrzewoAVL<T>::Iterator findEle(T x)
+        {
+            return x1.findEle(x);
+        }
+
+        std::size_t size() const { return x1.treeSize();}
+
 };
 
 template <typename T>
 std::pair<bool, typename TDrzewoAVL<T>::Iterator> TSet<T>::insert(T x)
 {
-    bool pombool = false;
-    typename TDrzewoAVL<T>::Iterator iter;
-
-    if(x1.findElement(x) == nullptr)
-    {
-        pombool = true;
-        x1.insert(x); 
-        
-        return std::make_pair(pombool, typename TDrzewoAVL<T>::Iterator (iter));
-    }
-    return make_pair(pombool, typename TDrzewoAVL<T>::Iterator (iter));
-        
+    return x1.insert(x);
 }
 
 template <typename T>
@@ -55,16 +62,9 @@ void TSet<T>::display()
 }
 
 template <typename T>
-void TSet<T>::findElement(T x)
+typename TDrzewoAVL<T>::Iterator TSet<T>::findElement(T x)
 {
-    auto pom = x1.findElement(x);
-    /*if(pom == nullptr)
-        return nullptr;
-    else
-    {
-        ;
-    }*/
-    
+    return x1.findEle(x);
 }
 
 template <typename T>
@@ -78,6 +78,12 @@ void TSet<T>::remove(T x)
 
 template <typename T>
 int TSet<T>::sizeElement()
+{
+    return x1.treeSize();
+}
+
+template <typename T>
+int TSet<T>::sizeElement() const
 {
     return x1.treeSize();
 }

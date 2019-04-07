@@ -30,9 +30,10 @@ class TDrzewoAVL
 		}
 		~TDrzewoAVL();
 		void display();
-		void insert(T );
+		std::pair<bool, typename TDrzewoAVL<T>::Iterator> insert(T );
 		void remove(T );
 		int treeSize();
+		int treeSize() const;
 		
 		struct Node
 		{
@@ -45,6 +46,8 @@ class TDrzewoAVL
 
 		Node* findElement(T ); //zwraca wskaznik do szukanego elementu
 		Node* root = nullptr;
+
+		stack<Node*> pomstack;
 
 		class Iterator
 		{
@@ -72,22 +75,40 @@ class TDrzewoAVL
 					aktualny = node;
 				}
 
-				bool operator!=( Iterator &it )
+				Iterator(typename TDrzewoAVL<T>::Node* node, std::stack<typename TDrzewoAVL<T>::Node*> pomstack)
+				{
+					aktualny = node;
+					rodzic = pomstack;
+				}
+
+				std::size_t size() const { return treeSize();}
+
+				bool operator!=( Iterator &it ) 
 				{
 					return !((*this) == it);
 				}
 
-				bool operator==( Iterator &it )
+				bool operator!=( Iterator &it ) const
+				{
+					return !((*this) == it);
+				}
+
+				bool operator==( Iterator &it ) 
 				{
 					return (this->aktualny == it.aktualny);
 				}
 
-				const T& operator*(Iterator &it) const
+				bool operator==( Iterator &it ) const
+				{
+					return (this->aktualny == it.aktualny);
+				}
+
+				T& operator*() const
 				{
 					return (this->aktualny->data);
 				}
 
-				T& operator*() const
+				T& operator*()
 				{
 					return (this->aktualny->data);
 				}
@@ -139,11 +160,32 @@ class TDrzewoAVL
 			return it;
 		}
 
+		Iterator begin() const
+		{
+			if(treeSize() == 0)
+			{
+				Iterator it;
+				return it;
+			}
+
+			Iterator it(root);
+			it.setAktualny();
+			return it;
+		}
+
 		Iterator end()
 		{
 			Iterator it;
 			return it;
 		}
+
+		Iterator end() const
+		{
+			Iterator it;
+			return it;
+		}
+
+		typename TDrzewoAVL<T>::Iterator findEle(T );
 
 	private:
 
@@ -195,10 +237,36 @@ void TDrzewoAVL<T>::display()
 }
 
 template <typename T>
-void TDrzewoAVL<T>::insert(T x)
+std::pair<bool, typename TDrzewoAVL<T>::Iterator> TDrzewoAVL<T>::insert(T x)
 {
 	treesize++;
-	root = insert(x, root);
+
+	bool pombool = false;
+
+	if(findElement(x) == nullptr)
+	{
+		root = insert(x, root);
+		pombool = true;
+
+		auto z = findElement(x);
+
+		return std::make_pair(pombool, typename TDrzewoAVL<T>::Iterator (z, pomstack));
+	}
+	treesize--;
+	return std::make_pair(pombool, typename TDrzewoAVL<T>::Iterator (root, pomstack));
+}
+
+template <typename T>
+typename TDrzewoAVL<T>::Iterator TDrzewoAVL<T>::findEle(T x)
+{
+	auto z = findElement(x);
+	if(z != nullptr)
+	{
+		return typename TDrzewoAVL<T>::Iterator (z, pomstack);
+	}
+	else 
+		return typename TDrzewoAVL<T>::Iterator (z, pomstack);
+
 }
 
 template <typename T>
@@ -210,6 +278,13 @@ void TDrzewoAVL<T>::remove(T x)
 
 template <typename T>
 int TDrzewoAVL<T>::treeSize()
+{
+	//cout << treesize << endl;
+	return treesize;
+}
+
+template <typename T>
+int TDrzewoAVL<T>::treeSize() const
 {
 	//cout << treesize << endl;
 	return treesize;
@@ -310,6 +385,7 @@ typename TDrzewoAVL<T>::Node* TDrzewoAVL<T>::insert(T x, Node* t)
 		t->left = t->right = nullptr;
 	} else if(x < t->data)
 	{
+		pomstack.push(t->left);
 		t->left = insert(x, t->left);
 		if(height(t->left) - height(t->right) == 2)
 		{
@@ -320,6 +396,7 @@ typename TDrzewoAVL<T>::Node* TDrzewoAVL<T>::insert(T x, Node* t)
 		}
 	} else if(x > t->data)
 	{
+		pomstack.push(t->right);
 		t->right = insert(x, t->right);
 		if(height(t->right) - height(t->left) == 2)
 		{
