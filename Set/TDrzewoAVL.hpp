@@ -44,7 +44,7 @@ class TDrzewoAVL
 		};
 
 		Node* findElement(T ); //zwraca wskaznik do szukanego elementu
-		Node* root;
+		Node* root = nullptr;
 
 		class Iterator
 		{

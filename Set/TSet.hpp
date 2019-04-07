@@ -15,7 +15,7 @@ class TSet
 
         std::pair<bool, typename TDrzewoAVL<T>::Iterator> insert(T );
         void display();
-        std::pair<bool, typename TDrzewoAVL<T>::Iterator> findElement(T );
+        void findElement(T );
         void remove(T );
         int sizeElement();
 
@@ -32,7 +32,7 @@ class TSet
 };
 
 template <typename T>
-std::pair<bool, typename TDrzewoAVL<T>::Iterator>  TSet<T>::insert(T x)
+std::pair<bool, typename TDrzewoAVL<T>::Iterator> TSet<T>::insert(T x)
 {
     bool pombool = false;
     typename TDrzewoAVL<T>::Iterator iter;
