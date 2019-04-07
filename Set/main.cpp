@@ -1,5 +1,3 @@
-
-
 #include <iostream>
 #include <string>
 #include "TSet.hpp"
@@ -7,10 +5,10 @@
 using namespace std;
 
 template <typename Iter>
-void printDebugInfo(const std::pair<Iter, bool> &insert_info) { std::cout << (insert_info.second ? "Dodano " + std::to_string(*insert_info.first) : "Nie dodano ;/") << std::endl; }
+void printDebugInfo(const std::pair<bool, Iter> &insert_info) { std::cout << (insert_info.first ? "Dodano " + std::to_string(*insert_info.second) : "Nie dodano ;/") << std::endl; }
 
 template <typename Iter>
-void printDebugInfo(const Iter &find_info) { std::cout << (find_info ? "Znaleziono " + std::to_string(*find_info) : "Nie znaleziono ;/") << std::endl; }
+void printDebugInfo( Iter &find_info) { std::cout << (find_info ? "Znaleziono " + std::to_string(*find_info) : "Nie znaleziono ;/") << std::endl; }
 
 template <typename T>
 void printSetSizeAndElems(TSet<T> &s)
@@ -23,8 +21,8 @@ std::cout << std::endl;
 int main()
 {
 TSet<int> s;
-/*printDebugInfo(s.insert(8));
-printDebugInfo(s.insert(4));
+printDebugInfo(s.insert(8));
+/*printDebugInfo(s.insert(4));
 printDebugInfo(s.insert(10));
 printDebugInfo(s.insert(10));
 printDebugInfo(s.insert(2));
@@ -49,7 +47,11 @@ printSetSizeAndElems(s2);
 printSetSizeAndElems(s3);
 
 return 0;*/
-s.insert(1);
+s.insert(2);
+s.insert(3);
+//auto it = insert(1);
+//printDebugInfo(s.findElement(5));
 printSetSizeAndElems(s);
+
 }
 

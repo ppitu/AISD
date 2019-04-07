@@ -4,8 +4,6 @@
 #include <iostream>
 #include <stack>
 
-#include "Iteratory.hpp"
-
 using namespace std;
 
 template <class T>
@@ -15,8 +13,6 @@ template <class T>
 class TDrzewoAVL
 {
 	public:
-
-		Iterator<T> x2;
 
 		stack<T> x3;
 
@@ -49,8 +45,105 @@ class TDrzewoAVL
 
 		Node* findElement(T ); //zwraca wskaznik do szukanego elementu
 		Node* root;
-		Iterator<T> begin();
 
+		class Iterator
+		{
+			public:
+
+				typename TDrzewoAVL<T>::Node* aktualny = nullptr;
+				stack<typename TDrzewoAVL<T>::Node*> rodzic;
+
+				void setAktualny()
+				{
+					while(aktualny->left != nullptr)
+					{
+						rodzic.push(aktualny);
+						aktualny = aktualny->left;
+					}
+				}
+
+				Iterator()
+				{
+					aktualny = nullptr;
+				}
+
+				Iterator(typename TDrzewoAVL<T>::Node* node)
+				{
+					aktualny = node;
+				}
+
+				bool operator!=( Iterator &it )
+				{
+					return !((*this) == it);
+				}
+
+				bool operator==( Iterator &it )
+				{
+					return (this->aktualny == it.aktualny);
+				}
+
+				const T& operator*(Iterator &it) const
+				{
+					return (this->aktualny->data);
+				}
+
+				T& operator*() const
+				{
+					return (this->aktualny->data);
+				}
+
+				Iterator& operator++()
+				{
+					if(aktualny->right != nullptr)
+					{
+						aktualny = aktualny->right;
+						rodzic.push(aktualny);
+
+						while(aktualny->left != nullptr)
+						{
+							aktualny = aktualny->left;
+							rodzic.push(aktualny);
+						}
+					}
+
+					if(!rodzic.empty())
+					{
+						aktualny = rodzic.top();
+						rodzic.pop();
+					}else
+					{
+						aktualny = nullptr;
+					}
+
+					return *this;
+				}
+
+				Iterator operator++(int)
+				{
+					Iterator old = *this;
+					++(*this);
+					return old;
+				}
+		};	
+
+		Iterator begin()
+		{
+			if(treeSize() == 0)
+			{
+				Iterator it;
+				return it;
+			}
+
+			Iterator it(root);
+			it.setAktualny();
+			return it;
+		}
+
+		Iterator end()
+		{
+			Iterator it;
+			return it;
+		}
 
 	private:
 
@@ -74,12 +167,6 @@ class TDrzewoAVL
 
 
 //////////////////////////////////////////////////////////////////
-
-template <typename T>
-Iterator<T> TDrzewoAVL<T>::begin()
-{
-	
-}
 
 template <typename T>
 TDrzewoAVL<T>::TDrzewoAVL()
