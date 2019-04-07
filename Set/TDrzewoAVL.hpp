@@ -28,6 +28,7 @@ class TDrzewoAVL
 				treesize = kopiuj.treesize;
 			}
 		}
+
 		~TDrzewoAVL();
 		void display();
 		std::pair<bool, typename TDrzewoAVL<T>::Iterator> insert(T );
@@ -103,12 +104,7 @@ class TDrzewoAVL
 					return (this->aktualny == it.aktualny);
 				}
 
-				T& operator*() const
-				{
-					return (this->aktualny->data);
-				}
-
-				T& operator*()
+				const T& operator*() const
 				{
 					return (this->aktualny->data);
 				}
@@ -144,6 +140,11 @@ class TDrzewoAVL
 					Iterator old = *this;
 					++(*this);
 					return old;
+				}
+
+				operator bool() const 
+				{
+					return true;
 				}
 		};	
 
@@ -184,6 +185,8 @@ class TDrzewoAVL
 			Iterator it;
 			return it;
 		}
+
+		operator bool() { return true; }
 
 		typename TDrzewoAVL<T>::Iterator findEle(T );
 

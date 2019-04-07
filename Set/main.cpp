@@ -8,7 +8,7 @@ template <typename Iter>
 void printDebugInfo(const std::pair<bool, Iter> &insert_info) { std::cout << (insert_info.first ? "Dodano " + std::to_string(*insert_info.second) : "Nie dodano ;/") << std::endl; }
 
 template <typename Iter>
-void printDebugInfo( Iter &find_info) { std::cout << (find_info ? "Znaleziono " + std::to_string(*find_info) : "Nie znaleziono ;/") << std::endl; }
+void printDebugInfo(const Iter &find_info) { std::cout << (find_info ? "Znaleziono " + std::to_string(*find_info) : "Nie znaleziono ;/") << std::endl; }
 
 template <typename T>
 void printSetSizeAndElems(TSet<T> &s)
