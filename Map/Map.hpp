@@ -5,6 +5,12 @@
 
 #include "BST.hpp"
 
+/*template <typename K, typename V>
+class Map;
+
+template <typename K, typename V>
+std::ostream& operator<<(std::ostream&, typename Map<K, V>::MapElem& );
+*/
 template <typename K, typename V>
 class Map
 {
@@ -26,14 +32,18 @@ class Map
 				bool operator<(const MapElem &) const;
 				bool operator>(const MapElem &) const;
 
-				friend ostream& operator<<(ostream&, MapElem &);
-
+				friend std::ostream& operator<<(std::ostream& out, MapElem &elem)			
+				{
+					return out << "( " << elem.key_value.first <<", " << elem.key_value.second <<" )";
+				}
 		};
 	
 	public:
 		BST<MapElem> bst_t;
 		typename BST<MapElem>::Iterator begin();
 		typename BST<MapElem>::Iterator end();	
+
+
 };
 
 /*funkcje publiczne klasy Map*************************************************/
@@ -90,11 +100,11 @@ bool Map<K, V>::MapElem::operator>(const MapElem& elem ) const
 	return this->key_value.first > elem.key_value.first;
 }
 
-template <typename K, typename V>
-ostream& operator<<(ostream& out, typename Map<K, V>::MapElem &elem)
+/*template <typename K, typename V>
+std::ostream& operator<<(std::ostream& out, typename Map<K, V>::MapElem &elem)
 {
 	out << "(" << elem.key_value.first << "," << elem.key_value.second << ")";
 	return out;
-}
+}*/
 
 #endif //MAP_HPP

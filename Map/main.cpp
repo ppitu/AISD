@@ -10,7 +10,7 @@ void printSetSizeAndElems(Map<K, V> &m)
 {
 	cout << "Size " << m.size() << endl;
 	for(auto &e : m)
-		std::cout << e ;
+		cout << e << endl;
 	cout << endl;
 }
 
