@@ -13,11 +13,12 @@ class BST
 		BST();
 		BST(const BST &);
 		BST& operator=(const BST& );
-		void insert(T );
+		std::pair<bool, typename BST<T>::Iterator> insert(T, bool );
 		void remove(T );
 		void display();
 		void search(T );
 		int size();
+		int size() const;
 
 		class Iterator
 		{
@@ -59,6 +60,12 @@ class BST
 
 		Node* root;
 		stack<typename BST<T>::Node*> helpstack;
+	
+	public:
+		Node* find(T );
+		typename BST<T>::Iterator findElem(T );
+
+	private:
 
 		void inorder(Node* );
 		Node* makeEmpty(Node* );
@@ -101,10 +108,17 @@ typename BST<T>::BST& BST<T>::operator=(const BST<T> &copy)
 }
 
 template <typename T>
-void BST<T>::insert(T x)
+std::pair<bool, typename BST<T>::Iterator> BST<T>::insert(T x, bool helpbool)
 {
-	treesize++;
-	root = insert(x, root);
+	if(helpbool)
+	{
+		treesize++;
+		root = insert(x, root);
+
+		return std::make_pair(helpbool, typename BST<T>::Iterator (find(x, root), helpstack));
+	}
+
+	return std::make_pair(helpbool, typename BST<T>::Iterator (root, helpstack));
 }
 
 template <typename T>
@@ -134,6 +148,12 @@ void BST<T>::search(T x)
 
 template <typename T>
 int BST<T>::size()
+{
+	return treesize;
+}
+
+template <typename T>
+int BST<T>::size() const
 {
 	return treesize;
 }
@@ -178,6 +198,23 @@ typename BST<T>::Iterator BST<T>::end() const
 {
 	Iterator it;
 	return it;
+}
+
+template <typename T>
+typename BST<T>::Node* BST<T>::find(T x)
+{
+	return find(x, root);
+}
+
+template <typename T>
+typename BST<T>::Iterator BST<T>::findElem(T x)
+{
+	auto z = find(x);
+
+	if(z == nullptr)
+		return typename BST<T>::Iterator (z, helpstack);
+
+	return typename BST<T>::Iterator (z, helpstack);
 }
 
 /*Funkcje klasy iterator publiczne*********************************************/
