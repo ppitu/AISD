@@ -2,6 +2,7 @@
 #define BST_HPP_
 
 #include <iostream>
+#include <string>
 #include <stack>
 
 using namespace std;
@@ -38,9 +39,14 @@ class BST
 				bool operator!=(Iterator& );
 				bool operator==(Iterator& );
 
+				void operator=(const string &);
+
 				T& operator*() const;
 				bool operator!=(Iterator& ) const;
 				bool operator==(Iterator& ) const;
+
+				operator bool() const {return true;}
+
 		};
 
 		Iterator begin();
@@ -63,6 +69,8 @@ class BST
 	
 	public:
 		Node* find(T );
+		Node* find(T ) const;
+		typename BST<T>::Iterator findElem(T ) const;
 		typename BST<T>::Iterator findElem(T );
 
 	private:
@@ -74,6 +82,7 @@ class BST
 		Node* findMax(Node* );
 		Node* remove(T, Node* );
 		Node* find(T, Node* );
+		Node* find(T, Node* ) const;
 		Node* copyNode(Node *);
 
 		int treesize = 0;
@@ -207,6 +216,23 @@ typename BST<T>::Node* BST<T>::find(T x)
 }
 
 template <typename T>
+typename BST<T>::Node* BST<T>::find(T x) const
+{
+	return find(x, root);
+}
+
+template <typename T>
+typename BST<T>::Iterator BST<T>::findElem(T x) const
+{
+	const auto z = find(x);
+
+	if(z == nullptr)
+		return typename BST<T>::Iterator (z, helpstack);
+
+	return typename BST<T>::Iterator (z, helpstack);
+}
+
+template <typename T>
 typename BST<T>::Iterator BST<T>::findElem(T x)
 {
 	auto z = find(x);
@@ -229,6 +255,12 @@ template <typename T>
 BST<T>::Iterator::Iterator(typename BST<T>::Node* node)
 {
 	current = node;
+}
+
+template <typename T>
+void BST<T>::Iterator::operator=(const string & str)
+{
+
 }
 
 template <typename T>
@@ -443,6 +475,18 @@ typename BST<T>::Node* BST<T>::find(T x, Node* t)
 		return t;
 }
 
+template <typename T>
+typename BST<T>::Node* BST<T>::find(T x, Node* t) const
+{
+	if(t == nullptr)
+		return nullptr;
+	else if(x < t->data)
+		return find(x, t->left);
+	else if(x > t->data)
+		return find(x, t->right);
+	else
+		return t;
+}
 
 template <typename T>
 typename BST<T>::Node* BST<T>::copyNode(Node* t)

@@ -8,15 +8,14 @@ using namespace std;
 template <typename Iter>
 void printDebugInfo(const std::pair<bool, Iter> &insert_info)
 {
-	//cout << (insert_info.first ? "Dodano " + *insert_info.second : "Nie dodano ;/") << endl;
-	
-	if(insert_info.first)
-		cout << "Dodano " << *insert_info.second;
-	else
-		cout << "Nie dodano ;/";
+	cout << (insert_info.first ? "Dodano " + !*insert_info.second : "Nie dodano ;/") << endl;	
+}
 
-	cout << endl;
-	
+template <typename Iter>
+void printDebugInfo(const Iter &find_info)
+{
+	cout << (find_info ? "Znaleziono " + !*find_info : "Nie znaleziono ;/") << endl;
+
 }
 
 template <typename K, typename V>
@@ -62,10 +61,30 @@ int main()
 	}
 
 	auto it = map_t.find(10);
+	*it = "10 (poprawione)";
 
+	printDebugInfo(map_t.find(5));	
+	map_t.remove(4);
+	printDebugInfo(map_t.find(5));
+map_t.remove(12);
+map_t.remove(14);
+printDebugInfo(map_t.insert( { 0, "zero" } ));
+printDebugInfo(map_t.insert( { 16, "sixteen" } ));
+{
+Map<int, std::string> m3;
+m3 = map_t;
+printSetSizeAndElems(m3);
+}
+map_t.remove(8);
+printSetSizeAndElems(map_t);
+const auto m4 = map_t;
+printSetSizeAndElems(m4);
+auto it2 = m4.find(10);
+// *it2 = "nie powinno sie skompilowac";
+// m4[2] = "nie powinno sie skompilowac";
+map_t[2] = "two (poprawione)";
+map_t[20] = "twenty";
+printSetSizeAndElems(map_t);
 
-
-
-
-	return 0;
+return 0;
 }
