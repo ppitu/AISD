@@ -15,8 +15,8 @@ class UniversalSet
 				class Iterator
 				{
 					private:
-						Iterator(const Vector *vector_ptr);
-						Iterator(const Vector *vector_ptr, std::size_t i);
+						Iterator(const Vector *vector_ptr) {this->vector_ptr_ = vector_ptr; this->i_ = 0;}
+						Iterator(const Vector *vector_ptr, std::size_t i) {this->vector_ptr_ = vector_ptr; this->i_ = i;}
 
 					public:
 						Iterator(const Iterator&) = default;
@@ -31,14 +31,25 @@ class UniversalSet
 						std::size_t i_;
 
 					public:
-						bool operator==(const Iterator &it) const;
-						bool operator!=(const Iterator &it) const;
+						bool operator==(const Iterator &it) const {return this->i_ == it.i_; }
+						bool operator!=(const Iterator &it) const {return this->i_ != it.i_; }
 						// Przechodzi na kolejny (istniejacy!) element w "Vector"
-						Iterator& operator++();
-						Iterator operator++(int);
-						const T& operator*() const;
-						const T* operator->() const;
-						operator bool() const;
+						Iterator& operator++()
+						{
+							do{
+								i_++;
+							}while(!vector_ptr_->bs_[i_] && i_ < vector_ptr_->bs_.size());
+							return *this;
+						}
+						Iterator operator++(int)
+						{
+							Iterator old = *this;
+							++(*this);
+							return old;
+						}
+						const T& operator*() const { return vector_ptr_->universe_ptr_->elems_[i_];}
+						const T* operator->() const { return &vector_ptr_->universe_ptr_->elems_[i_];}
+						operator bool() const {return i_ < UNIVERSE_SIZE;}
 				};
 
 			public:
@@ -60,11 +71,20 @@ class UniversalSet
 				// Zwraca liczbe elementów reprezentowanych przez "Vector"
 				std::size_t count() const;
 				// Jezeli element o indeksie "i" nie nalezy do "Vector" to dodaje ten element oraz zwraca "Iterator" do dodanego elementu i "true", w przeciwnym razie zwraca samo co "end()" i "false"
-				/*std::pair<Iterator, bool>*/ void insert(std::size_t i);
+				std::pair<Iterator, bool> insert(std::size_t i);
 				// Jezeli element o indeksie "i" nalezy do "Vector" to zwraca "true", w przeciwnym razie zwraca "false"
 				bool isMember(std::size_t i) const;
 				// Jeżeli element o indeksie "i" należy do "Vector" to zwraca "Iterator" do tego elementu, w przeciwnym razie zwraca to samo co "end()"
-				Iterator elemIterator(std::size_t i) const;
+				Iterator elemIterator(std::size_t i) const
+				{
+					if(bs_.test(i) == false)
+					{
+						Iterator it(this, i);
+						return it;
+					}
+					Iterator it(this, bs_.size());
+					return it;
+				}
 				// Jezeli element o indeksie "i" nalezy do "Vector" to usuwa ten element i zwraca "true", w przeciwnym razie zwraca "false"
 				bool remove(std::size_t i);
 				// Zwraca "true" jeżeli obiekt "v2" reprezentuje ten sam zestaw elementow z tego samego uniwersum, w przeciwnym razie zwraca "false"
@@ -136,23 +156,17 @@ class UniversalSet
 					return helpvec;
 				}
 				// Zwraca "Iterator" na poczatek
-				Iterator begin() const;
+				Iterator begin() const
+				{
+					int i = 0;
+					while(!bs_[i])
+						i++;
+					return Iterator(this, i);
+				}
 				// Zwraca "Iterator" za koniec
-				Iterator end() const;
-				void lol()
+				Iterator end() const
 				{
-					std::cout << bs_ << std::endl;
-				}
-				void lol() const
-				{
-					std::cout << bs_ << std::endl;
-				}
-				void lol1()
-				{
-					for(int i = 0; i < bs_.size(); i++)
-					{
-						std::cout << universe_ptr_.first.at(i) << std::endl;
-					}
+					return Iterator(this, bs_.size());
 				}
 		};
 
@@ -239,10 +253,19 @@ std::size_t UniversalSet<T, UNIVERSE_SIZE>::Vector::count() const
 }
 
 template <typename T, std::size_t UNIVERSE_SIZE>
-void UniversalSet<T, UNIVERSE_SIZE>::Vector::insert(std::size_t i)
+std::pair<typename UniversalSet<T, UNIVERSE_SIZE>::Vector::Iterator, bool> UniversalSet<T, UNIVERSE_SIZE>::Vector::insert(std::size_t i)
 {
+	bool helpbool = false;
 	if(bs_.test(i) == false)
+	{
+		helpbool = true;
 		bs_.set(i);
+		typename UniversalSet<T, UNIVERSE_SIZE>::Vector::Iterator it(this, i);
+		return std::make_pair(it, helpbool);
+	}
+	typename UniversalSet<T, UNIVERSE_SIZE>::Vector::Iterator it(this, bs_.size());
+	return std::make_pair(it, helpbool);
+
 }
 
 template <typename T, std::size_t UNIVERSE_SIZE>
@@ -285,21 +308,8 @@ bool UniversalSet<T, UNIVERSE_SIZE>::Vector::operator!=(const Vector &v2) const
 		return false;
 }
 
-template <typename T, std::size_t UNIVERSE_SIZE>
-typename UniversalSet<T, UNIVERSE_SIZE>::Vector::Iterator UniversalSet<T, UNIVERSE_SIZE>::Vector::begin() const
-{
-	Iterator it(this, UNIVERSE_SIZE);
-	return it;
-}
 
-template <typename T, std::size_t UNIVERSE_SIZE>
-typename UniversalSet<T, UNIVERSE_SIZE>::Vector::Iterator UniversalSet<T, UNIVERSE_SIZE>::Vector::end() const
-{
-	Iterator it(this);
-	return it;
-}
-
-/*Klasa iterator funkcje prywatne*/
+/*Klasa iterator funkcje prywatne
 
 template <typename T, std::size_t UNIVERSE_SIZE>
 UniversalSet<T, UNIVERSE_SIZE>::Vector::Iterator::Iterator(const Vector *vector_ptr)
@@ -314,7 +324,7 @@ UniversalSet<T, UNIVERSE_SIZE>::Vector::Iterator::Iterator(const Vector *vector_
 	this->i_ = i;
 }
 
-/*Klasa iterator funkcje publiczne*/
+/*Klasa iterator funkcje publiczne
 
 template <typename T, std::size_t UNIVERSE_SIZE>
 bool UniversalSet<T, UNIVERSE_SIZE>::Vector::Iterator::operator==(const Iterator &it) const
@@ -338,4 +348,4 @@ template <typename T, std::size_t UNIVERSE_SIZE>
 const T& UniversalSet<T, UNIVERSE_SIZE>::Vector::Iterator::operator*() const
 {
 	
-}
+}*/
