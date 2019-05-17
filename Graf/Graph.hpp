@@ -1,359 +1,268 @@
-#ifndef GRAPH_HPP
-#define GRAPH_HPP
-
-#include <algorithm>
 #include <cstdint>
-#include <iomanip>
-#include <iostream>
-#include <limits>
-#include <optional>
-#include <stack>
 #include <vector>
+#include <optional>
+#include <limits>
+#include <stack>
+#include <iostream>
+#include <algorithm>
+#include <string>
+#include <iomanip>
 
 template <typename V, typename E>
 class Graph
 {
-	public:
-		class VerticesIterator
-		{
-			private:
-				VerticesIterator(const Graph<V, E> &graph, std::size_t current_vertex_id = 0u);
+	class VerticesIterator
+	{
+		private:
+			VerticesIterator(Graph<V, E> &graph, std::size_t current_vertex_id = 0u);
 
-			public:
-				// ...
+		public:
+			// ...
 
-				friend class Graph<V, E>;
+			friend class Graph<V, E>;
 
-			private:
-				const Graph& m_vgraph;
-				typename decltype(std::declval<Graph>().m_graph)::const_iterator m_iterator;
+		private:
+			const Graph& ver_graph;			
+			std::vector<V> viter_graph{};
 
-			public:
-				bool operator==(const VerticesIterator &vi) const;
-				bool operator!=(const VerticesIterator &vi) const;
-				VerticesIterator& operator++();
-				VerticesIterator operator++(int);
-				const V& operator*() const;
-				const V* operator->() const;
-		};
+		public:
+			bool operator==(const VerticesIterator &vi) const;
+			bool operator!=(const VerticesIterator &vi) const;
+			VerticesIterator& operator++();
+			VerticesIterator operator++(int);
+			V& operator*() const;
+			V* operator->() const;
+	};
 
-		class EdgesIterator
-		{
-			private:
-				EdgesIterator(const Graph<V, E> &graph, std::size_t nm_row, std::size_t nm_col);
+	class EdgesIterator
+	{
+		private:
+			EdgesIterator(Graph<V, E> &graph, std::size_t nm_row, std::size_t nm_col);
 
-			public:
-				// ...
+		public:
+			// ...
 
-				friend class Graph<V, E>;
+			friend class Graph<V, E>;
 
-			private:
-				const Graph& m_egraph;
-				decltype(m_egraph.m_graph.begin()) m_row;
-				decltype(m_row->second.begin()) m_column;
-			public:
-				bool operator==(const EdgesIterator &ei) const;
-				bool operator!=(const EdgesIterator &ei) const;
-				EdgesIterator& operator++();
-				EdgesIterator operator++(int);
-				const E& operator*() const;
-				const E* operator->() const;
-		};
+		private:
+			// ...
+
+		public:
+			bool operator==(const EdgesIterator &ei) const;
+			bool operator!=(const EdgesIterator &ei) const { return !(*this == ei); }
+			EdgesIterator& operator++();
+			EdgesIterator operator++(int);
+			E& operator*() const;
+			E* operator->() const;
+	};
 
 	public:
-		Graph() = default;
-		// ...
+	Graph() = default;
 
 	private:
-		std::vector<std::pair<V, std::vector<std::optional<E>>>> m_graph{};
-
+	std::vector<V> v_graph{};		
+	std::vector<std::vector<std::optional<E>>> e_graph{};
+	int nrofedges = 0;		
 	public:
-		VerticesIterator insertVertex(const V &vertex_data);
-		std::pair<EdgesIterator, bool> insertEdge(std::size_t vertex1_id, std::size_t vertex2_id, const E &label = E(), bool replace = true);
-		bool removeVertex(std::size_t vertex_id);
-		bool removeEdge(std::size_t vertex1_id, std::size_t vertex2_id);
-		bool edgeExist(std::size_t vertex1_id, std::size_t vertex2_id) const;
-		std::size_t nrOfVertices() const;
-		std::size_t nrOfEdges() const;
-		void printNeighborhoodMatrix() const;
-		VerticesIterator vertex(std::size_t vertex_id) const;
-		EdgesIterator edge(std::size_t vertex1_id, std::size_t vertex2_id) const;
-		VerticesIterator begin() const;
-		VerticesIterator end() const;
-		VerticesIterator beginVertices() const;
-		VerticesIterator endVertices() const;
-		EdgesIterator beginEdges() const;
-		EdgesIterator endEdges() const;
+	/*VerticesIterator*/ void insertVertex(const V &vertex_data);
+	/*std::pair<EdgesIterator, bool>*/ void insertEdge(std::size_t vertex1_id, std::size_t vertex2_id, const E &label = E(), bool replace = true);
+	bool removeVertex(std::size_t vertex_id);
+	bool removeEdge(std::size_t vertex1_id, std::size_t vertex2_id);
+	bool edgeExist(std::size_t vertex1_id, std::size_t vertex2_id) const;
+	std::size_t nrOfVertices() const;
+	std::size_t nrOfEdges() const;
+	void printNeighborhoodMatrix() const;
+	VerticesIterator vertex(std::size_t vertex_id);
+	EdgesIterator edge(std::size_t vertex1_id, std::size_t vertex2_id);
+	VerticesIterator begin();
+	VerticesIterator end();
+	VerticesIterator beginVertices();
+	VerticesIterator endVertices();
+	EdgesIterator beginEdges();
+	EdgesIterator endEdges();
 };
 
-// Graph implementation
-
 template <typename V, typename E>
-std::size_t Graph<V, E>::nrOfVertices() const
-{
-	return m_graph.size();
-}
-
-template <typename V, typename E>
-typename Graph<V, E>::VerticesIterator Graph<V, E>::begin() const
-{
-	return beginVertices();
-}
-
-template <typename V, typename E>
-typename Graph<V, E>::VerticesIterator Graph<V, E>::end() const
-{
-
-
-	return endVertices();
-}
-
-template <typename V, typename E>
-typename Graph<V, E>::VerticesIterator Graph<V, E>::beginVertices() const
-{
-	return VerticesIterator(*this);
-}
-
-template <typename V, typename E>
-typename Graph<V, E>::VerticesIterator Graph<V, E>::endVertices() const
-{
-	return ++VerticesIterator(*this, m_graph.size() - 1);
-}
-
-template <typename V, typename E>
-typename Graph<V, E>::VerticesIterator Graph<V, E>::vertex(std::size_t vertex_id) const
-{
-	return VerticesIterator(*this, vertex_id);
-}
-
-template <typename V, typename E>
-typename Graph<V, E>::VerticesIterator Graph<V, E>::insertVertex(const V& vertex_data)
+void Graph<V, E>::insertVertex(const V &vertex_data)
 {
 	int n = 0;
-	for(const auto& elem : m_graph)
-	{
-		if(elem.first == vertex_data)
+
+	for(std::size_t i = 0; i < v_graph.size(); i++)
+		if(v_graph[i] == vertex_data)
 			n++;
-	}
+
 	if(n == 0)
-	{	
-		for (auto& vertex : m_graph) 
-		{
-			vertex.second.push_back({});
-		}
-		
-		m_graph.push_back(std::make_pair(vertex_data, std::vector<std::optional<E>>(m_graph.size() + 1)));
+	{
+		e_graph.resize(v_graph.size() + 1);
 
-		return VerticesIterator(*this, m_graph.size() - 1);
+
+		for(std::size_t i = 0; i < (v_graph.size() + 1); i++)
+			e_graph[i].resize(v_graph.size() + 1);
+
+		v_graph.push_back(vertex_data);	
 	}
+}
 
-	return VerticesIterator(*this, m_graph.size() - 1);
+template <typename V, typename E>
+void Graph<V, E>::insertEdge(std::size_t vertex1_id, std::size_t vertex2_id, const E &label, bool replace)
+{
+	if(edgeExist(vertex1_id, vertex2_id) && !replace)
+		return;
+	else	
+		e_graph[vertex1_id][vertex2_id].emplace(label);
+	nrofedges++;
 }
 
 template <typename V, typename E>
 bool Graph<V, E>::removeVertex(std::size_t vertex_id)
 {
-	if (vertex_id < 0 || vertex_id >= m_graph.size())
+	if(vertex_id < 0 || vertex_id > v_graph.size())
 		return false;
-	
-	m_graph.erase(m_graph.begin() + vertex_id);
-	
-	for( auto& elem : m_graph)
+
+	v_graph.erase(v_graph.begin() + vertex_id);
+
+	for(std::size_t i = 0; i < (v_graph.size() + 1); i++)
 	{
-		elem.second.erase(elem.second.begin() + vertex_id);	
+		if(e_graph[vertex_id][i].has_value())	
+			nrofedges--;
+		if(e_graph[i][vertex_id].has_value())
+			if(i != vertex_id)
+				nrofedges--;
 	}
+
+	e_graph.erase(e_graph.begin() + vertex_id);
+
+	for(std::size_t i = 0; i < (v_graph.size() + 1); i++)
+		e_graph[i].erase(e_graph[i].begin() + vertex_id);
+
 	return true;
-}
-
-template <typename V, typename E>
-std::size_t Graph<V, E>::nrOfEdges() const
-{
-	std::size_t out{0};
-	for (const auto& i : m_graph)
-		for (const auto& j : i.second)
-			if (j.has_value())
-				++out;
-	return out;
-}
-
-template <typename V, typename E>
-typename Graph<V, E>::EdgesIterator Graph<V, E>::beginEdges() const
-{
-	return EdgesIterator(*this, 0, 0);
-}
-
-template <typename V, typename E>
-typename Graph<V, E>::EdgesIterator Graph<V, E>::endEdges() const
-{
-	auto tmp = EdgesIterator(*this, 0, 0);
-	tmp.m_row = m_graph.end();
-	return tmp;
-}
-
-template <typename V, typename E>
-typename Graph<V, E>::EdgesIterator
-Graph<V, E>::edge(std::size_t vertex1_id, std::size_t vertex2_id) const
-{
-	return EdgesIterator{*this, vertex1_id, vertex2_id};
-}
-
-template <typename V, typename E>
-bool Graph<V, E>::edgeExist(std::size_t vertex1_id, std::size_t vertex2_id)
-	const
-{
-	return m_graph[vertex1_id].second[vertex2_id].has_value();
-}
-
-template <typename V, typename E>
-std::pair<typename Graph<V, E>::EdgesIterator, bool> Graph<V, E>::insertEdge(std::size_t vertex1_id, std::size_t vertex2_id, const E& label, bool replace)
-{
-	if (edgeExist(vertex1_id, vertex2_id) && !replace)
-		return std::make_pair(EdgesIterator(*this, 0, 0), false);
-	m_graph[vertex1_id].second[vertex2_id] = label;
-	return std::make_pair(EdgesIterator(*this, vertex1_id, vertex2_id), true);
 }
 
 template <typename V, typename E>
 bool Graph<V, E>::removeEdge(std::size_t vertex1_id, std::size_t vertex2_id)
 {
-	if (vertex1_id < 0 || vertex2_id >= m_graph.size() || vertex2_id < 0 || vertex2_id >= m_graph.size())
+	//if(vertex1_id < 0 && vertex2_id < 0 && vertex1_id > v_graph.size() && vertex2_id > v_graph.size())
+	//	return false;
+
+	if(!e_graph[vertex1_id][vertex2_id].has_value())
 		return false;
 
-	auto& tmp = m_graph[vertex1_id].second[vertex2_id];
-	if (!tmp.has_value())
-		return false;
-	tmp.reset();
+	e_graph[vertex1_id][vertex2_id].reset();
+	nrofedges--;	
 	return true;
+}
+
+template <typename V, typename E>
+bool Graph<V, E>::edgeExist(std::size_t vertex1_id, std::size_t vertex2_id) const
+{
+	return e_graph[vertex1_id][vertex2_id].has_value();
+}
+
+template <typename V, typename E>
+std::size_t Graph<V, E>::nrOfVertices() const
+{
+	return v_graph.size();
+}
+
+template <typename V, typename E>
+std::size_t Graph<V, E>::nrOfEdges() const
+{
+	return nrofedges;
 }
 
 template <typename V, typename E>
 void Graph<V, E>::printNeighborhoodMatrix() const
 {
-	for (const auto& i : m_graph) {
-		for (const auto& j : i.second) {
-			if (j)
-				std::cout << std::setw(8) << *j;
+	for(const auto &vertex : v_graph)
+		std::cout << vertex << std::endl;
+	std::cout << std::endl;
+
+	for(const auto &elem : e_graph)
+	{
+		for(const auto &el : elem)
+		{
+			if(el.has_value())
+				std::cout << std::setw(8) << el.value();
 			else
-				std::cout << std::setw(8) << ".0";
+				std::cout << std::setw(8) << ".0 ";
 		}
 		std::cout << std::endl;
 	}
 }
 
-// Edges implementation
-
 template <typename V, typename E>
-bool Graph<V, E>::EdgesIterator::
-operator==(const typename Graph<V, E>::EdgesIterator& ei) const
+typename Graph<V, E>::VerticesIterator Graph<V, E>::vertex(std::size_t vertex_id)
 {
-	return m_row == ei.m_row
-		&& (m_row == m_egraph.m_graph.end() || m_column == ei.m_column);
+	return VerticesIterator(*this, vertex_id);
 }
 
 template <typename V, typename E>
-bool Graph<V, E>::EdgesIterator::operator!=(const EdgesIterator& ei) const
-{
-	return !(*this == ei);
+typename Graph<V, E>::VerticesIterator Graph<V, E>::begin() 
+{ 
+	return beginVertices(); 
 }
-
-	template <typename V, typename E>
-typename Graph<V, E>::EdgesIterator& Graph<V, E>::EdgesIterator::operator++()
-{
-	// past-the-end
-	if (m_row == m_egraph.m_graph.end()) {
-		return *this;
-	}
-
-	do {
-		++m_column;
-		if (m_column == m_row->second.end()) {
-			++m_row;
-			if (m_row == m_egraph.m_graph.end()) {
-				return *this;
-			}
-			m_column = m_row->second.begin();
-		}
-	} while (!m_column->has_value());
-	return *this;
+	
+template <typename V, typename E>
+typename Graph<V, E>::VerticesIterator Graph<V, E>::end() 
+{ 
+	return endVertices(); 
 }
-
-	template <typename V, typename E>
-typename Graph<V, E>::EdgesIterator Graph<V, E>::EdgesIterator::operator++(int)
+	
+template <typename V, typename E>
+typename Graph<V, E>::VerticesIterator Graph<V, E>::beginVertices()
 {
-	auto tmp = *this;
-	this->operator++();
-	return tmp;
+	return VerticesIterator(*this);
 }
 
 template <typename V, typename E>
-const E& Graph<V, E>::EdgesIterator::operator*() const
+typename Graph<V, E>::VerticesIterator Graph<V, E>::endVertices()
 {
-	return m_column->value();
+	return VerticesIterator(*this, v_graph.size() - 1);
+}
+
+/////////////////////////////////////////////////////////////////////////
+//Vertex class implementacja
+
+template <typename V, typename E>
+bool Graph<V, E>::VerticesIterator::operator==(const VerticesIterator &vi) const
+{
+	return viter_graph == vi.viter_graph;
+}
+			
+template <typename V, typename E>
+bool Graph<V, E>::VerticesIterator::operator!=(const VerticesIterator &vi) const 
+{
+	return !(*this == vi); 
 }
 
 template <typename V, typename E>
-const E* Graph<V, E>::EdgesIterator::operator->() const
+typename Graph<V, E>::VerticesIterator& Graph<V, E>::VerticesIterator::operator++()
 {
-	return m_column->value();
-}
-
-template <typename V, typename E>
-Graph<V, E>::EdgesIterator::EdgesIterator(const Graph& graph, std::size_t nm_row, std::size_t nm_col)
-	: m_egraph{graph}, m_row{m_egraph.m_graph.begin() + nm_row}, m_column{m_row->second.begin() + nm_col}
-{
-	if (m_row != m_egraph.m_graph.end() && !m_column->has_value())
-		++(*this);
-}
-
-// Vertex implementation
-
-template <typename V, typename E>
-bool Graph<V, E>::VerticesIterator::
-operator==(const typename Graph<V, E>::VerticesIterator& vi) const
-{
-	return m_iterator == vi.m_iterator;
-}
-
-template <typename V, typename E>
-bool Graph<V, E>::VerticesIterator::
-operator!=(const typename Graph<V, E>::VerticesIterator& vi) const
-{
-	return !(*this == vi);
-}
-
-template <typename V, typename E>
-typename Graph<V, E>::VerticesIterator& Graph<V, E>::VerticesIterator::
-operator++()
-{
-	++m_iterator;
+	viter_graph++;
 	return *this;
 }
 
 template <typename V, typename E>
-typename Graph<V, E>::VerticesIterator Graph<V, E>::VerticesIterator::
-operator++(int)
+typename Graph<V, E>::VerticesIterator Graph<V, E>::VerticesIterator::operator++(int)
 {
-	auto tmp = *this;
-	this->operator++();
+	auto tmp = viter_graph;
+	++(*this);
 	return tmp;
 }
 
-template <typename V, typename E>
-const V& Graph<V, E>::VerticesIterator::operator*() const
+template <typename V, typename E>			
+V& Graph<V, E>::VerticesIterator::operator*() const
 {
-	return m_iterator->first;
+	return *viter_graph;
 }
 
 template <typename V, typename E>
-const V* Graph<V, E>::VerticesIterator::operator->() const
+V* Graph<V, E>::VerticesIterator::operator->() const
 {
-	return m_iterator->first;
+	return *viter_graph;
 }
 
 template <typename V, typename E>
-Graph<V, E>::VerticesIterator::VerticesIterator(const Graph& graph,std::size_t current_vertex_id)
-	: m_vgraph{graph}, m_iterator{m_vgraph.m_graph.begin() + current_vertex_id}
+Graph<V, E>::VerticesIterator::VerticesIterator(Graph<V, E> &graph, std::size_t current_vertex_id) : ver_graph{graph}, viter_graph{v_graph.begin() + current_vertex_id}
 {
 }
-
-#endif /* GRAPH_HPP */
